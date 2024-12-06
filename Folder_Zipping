@@ -9,26 +9,19 @@ def zip_folder(folder_path, zip_name=None):
     :param zip_name: Optional custom name for the output .zip file.
     """
     try:
-        # Check if the folder exists and is a directory
         if not os.path.exists(folder_path) or not os.path.isdir(folder_path):
             print("Error: Provided path is invalid or not a directory.")
             return
-
-        # Use the folder name as the default .zip file name
         folder_name = os.path.basename(folder_path.rstrip(os.sep))
         zip_name = zip_name or f"{folder_name}.zip"
         zip_path = os.path.join(os.path.dirname(folder_path), zip_name)
-
-        # Create the ZIP file
         with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk(folder_path):
                 for file in files:
                     file_path = os.path.join(root, file)
-                    # Add file to zip with relative path
                     arcname = os.path.relpath(file_path, folder_path)
                     zipf.write(file_path, arcname)
                 for dir in dirs:
-                    # Ensure empty folders are added
                     dir_path = os.path.join(root, dir)
                     if not os.listdir(dir_path):
                         arcname = os.path.relpath(dir_path, folder_path) + os.sep
@@ -40,15 +33,11 @@ def zip_folder(folder_path, zip_name=None):
         print("Error: Permission denied. Please check your access rights.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-# Main function to prompt user for input
 def main():
     folder_path = input("Enter the full path of the folder to zip: ").strip()
     if not folder_path:
         print("Error: No folder path provided.")
         return
-
-    # Ask if the user wants to specify a custom zip file name
     custom_name = input("Enter a custom name for the zip file (or press Enter to use the folder name): ").strip()
     zip_folder(folder_path, custom_name if custom_name else None)
 
